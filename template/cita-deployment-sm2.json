@@ -1,0 +1,244 @@
+{
+    "metadata": {
+        "name": "cita-run-sm2"
+    },
+    "spec": {
+        "replicas": 1,
+        "selector": {
+            "matchLabels": {
+                "cita": "chain-sm2"
+            }
+        },
+        "template": {
+            "metadata": {
+                "name": "cita-sm2",
+                "labels": {
+                    "cita": "chain-sm2"
+                }
+            },
+            "spec": {
+                "securityContext": {
+                    "runAsUser": 2021,
+                    "runAsGroup": 2021,
+                    "fsGroup": 2021
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "regcred"
+                    }
+                ],
+                "containers": [
+                    {
+                        "image": "registry.docker.heyue/rabbitmq-3.8.9-cita:v0.4",
+                        "name": "rabbitmq"
+                    },
+                    {
+                        "image": "registry.docker.heyue/cita-run-sm2:v1.0.1",
+                        "name": "cita-auth",
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "args": [
+                            "-c",
+                            "cita-auth -sc auth.toml"
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "auth",
+                                "mountPath": "/cita/auth.toml",
+                                "subPath": "auth.toml"
+                            },
+                            {
+                                "name": "data-pvc",
+                                "mountPath": "/data"
+                            }
+                        ]
+                    },
+                    {
+                        "image": "registry.docker.heyue/cita-run-sm2:v1.0.1",
+                        "name": "cita-chain",
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "args": [
+                            "-c",
+                            "cita-chain -sc chain.toml"
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "chain",
+                                "mountPath": "/cita/chain.toml",
+                                "subPath": "chain.toml"
+                            },
+                            {
+                                "name": "data-pvc",
+                                "mountPath": "/data"
+                            }
+                        ]
+                    },
+                    {
+                        "image": "registry.docker.heyue/cita-run-sm2:v1.0.1",
+                        "name": "cita-bft",
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "args": [
+                            "-c",
+                            "cita-bft -sc consensus.toml -p privkey"
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "consensus",
+                                "mountPath": "/cita/consensus.toml",
+                                "subPath": "consensus.toml"
+                            },
+                            {
+                                "name": "privkey",
+                                "mountPath": "/cita/privkey",
+                                "subPath": "privkey"
+                            },
+                            {
+                                "name": "data-pvc",
+                                "mountPath": "/data"
+                            }
+                        ]
+                    },
+                    {
+                        "image": "registry.docker.heyue/cita-run-sm2:v1.0.1",
+                        "name": "cita-executor",
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "args": [
+                            "-c",
+                            "cita-executor -sc executor.toml"
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "executor",
+                                "mountPath": "/cita/executor.toml",
+                                "subPath": "executor.toml"
+                            },
+                            {
+                                "name": "genesis",
+                                "mountPath": "/cita/genesis.json",
+                                "subPath": "genesis.json"
+                            },
+                            {
+                                "name": "data-pvc",
+                                "mountPath": "/data"
+                            }
+                        ]
+                    },
+                    {
+                        "image": "registry.docker.heyue/cita-run-sm2:v1.0.1",
+                        "name": "cita-jsonrpc",
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "args": [
+                            "-c",
+                            "cita-jsonrpc -sc jsonrpc.toml"
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "jsonrpc",
+                                "mountPath": "/cita/jsonrpc.toml",
+                                "subPath": "jsonrpc.toml"
+                            }
+                        ]
+                    },
+                    {
+                        "image": "registry.docker.heyue/cita-run-sm2:v1.0.1",
+                        "name": "cita-network",
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "args": [
+                            "-c",
+                            "cita-network -sc network.toml"
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "network",
+                                "mountPath": "/cita/network.toml",
+                                "subPath": "network.toml"
+                            },
+                            {
+                                "name": "address",
+                                "mountPath": "/cita/address",
+                                "subPath": "address"
+                            },
+                            {
+                                "name": "data-pvc",
+                                "mountPath": "/data"
+                            }
+                        ]
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "address",
+                        "configMap": {
+                            "name": "sm2-address"
+                        }
+                    },
+                    {
+                        "name": "auth",
+                        "configMap": {
+                            "name": "sm2-auth"
+                        }
+                    },
+                    {
+                        "name": "chain",
+                        "configMap": {
+                            "name": "sm2-chain"
+                        }
+                    },
+                    {
+                        "name": "consensus",
+                        "configMap": {
+                            "name": "sm2-consensus"
+                        }
+                    },
+                    {
+                        "name": "executor",
+                        "configMap": {
+                            "name": "sm2-executor"
+                        }
+                    },
+                    {
+                        "name": "jsonrpc",
+                        "configMap": {
+                            "name": "sm2-jsonrpc"
+                        }
+                    },
+                    {
+                        "name": "network",
+                        "configMap": {
+                            "name": "sm2-network"
+                        }
+                    },
+                    {
+                        "name": "genesis",
+                        "configMap": {
+                            "name": "sm2-genesis"
+                        }
+                    },
+                    {
+                        "name": "privkey",
+                        "configMap": {
+                            "name": "sm2-privkey"
+                        }
+                    },
+                    {
+                        "name": "data-pvc",
+                        "persistentVolumeClaim": {
+                            "claimName": "cita-pvc"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
