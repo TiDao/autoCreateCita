@@ -3,6 +3,7 @@ package main
 import(
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	//"k8s.io/apimachinery/pkg/api/resource"
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"io/ioutil"
 	"encoding/json"
@@ -10,33 +11,35 @@ import(
 
 //var deployment = &v1.Deployment{}
 type CitaChain struct{
-	ChainType string
-	Deployment *appv1.Deployment
-	PersistentVolumeClaim *corev1.PersistentVolumeClaim
-	Service *corev1.Service
+	//ChainType string
+	Deployment appsv1.Deployment
+	PersistentVolumeClaim corev1.PersistentVolumeClaim
+	Service corev1.Service
 }
 
-func (c *CitaChain) Init() error{
-	deploymentFile = ""
-	if c.ChainType == "secp256" {
-		deployment = "./template/cita-deployment-secp256.json"
+func (c *CitaChain) Init(chainType string) error{
+	deploymentFile := ""
+	if chainType == "secp256" {
+		deploymentFile = "./template/cita-deployment-secp256.json"
 	}else{
 		deploymentFile = "./template/cita-deployment-sm2.json"
 	}
-	PVCFile := "./tempalate/cita-pvc.json"
-	SVCFile := "./tempalate/svc.json"
+	PVCFile := "./template/cita-pvc.json"
+	SVCFile := "./template/svc.json"
 
-	if err := getDeploymentTemplate(deploymentFile,c.Deployment); err != nil{
+	if err := getDeploymentTemplate(deploymentFile,&c.Deployment); err != nil{
 		return err
 	}
 
-	if err := getPVCTemplate(PVCFile,c.PersistentVolumeClaim); err != nil{
+	if err := getPVCTemplate(PVCFile,&c.PersistentVolumeClaim); err != nil{
 		return err
 	}
 
-	if err := getSVCTemplate(SVCFile,c.Service); err != nil{
+	if err := getSVCTemplate(SVCFile,&c.Service); err != nil{
 		return err
 	}
+
+	//c.PersistentVolumeClaim.Spec.Resources.Requests["storage"] = resource.MustParse("10Gi")
 
 	return nil
 

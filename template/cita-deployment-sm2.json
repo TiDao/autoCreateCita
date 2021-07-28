@@ -1,6 +1,7 @@
 {
     "metadata": {
-        "name": "cita-run-sm2"
+        "name": "cita-run-sm2",
+		"namespace": "cita"
     },
     "spec": {
         "replicas": 1,

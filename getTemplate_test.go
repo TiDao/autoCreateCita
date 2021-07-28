@@ -11,11 +11,11 @@ func TestGetTemplate(t *testing.T) {
 	file := "./template/cita-deployment-sm2.json"
 	deployment := &appsv1.Deployment{}
 
-	err := getTemplate(file,deployment)
+	err := getDeploymentTemplate(file,deployment)
 	if err != nil{
 		t.Fatal(err)
 	}
-	fmt.Println(deployment)
+	//fmt.Println(deployment)
 }
 
 func TestGetPVCTemplate(t *testing.T) {
@@ -26,7 +26,7 @@ func TestGetPVCTemplate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(pvc)
+	//fmt.Println(pvc)
 }
 
 func TestGetSVCTemplate(t *testing.T) {
@@ -37,5 +37,15 @@ func TestGetSVCTemplate(t *testing.T) {
 	if err != nil{
 		t.Fatal(err)
 	}
-	fmt.Println(svc)
+	//fmt.Println(svc)
+}
+
+func TestInit(t *testing.T) {
+	citaChain := &CitaChain{}
+	err := citaChain.Init()
+	if err != nil{
+		t.Fatal(err)
+	}
+
+	fmt.Println(citaChain)
 }
