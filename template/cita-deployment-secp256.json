@@ -175,55 +175,55 @@
                     {
                         "name": "address",
                         "configMap": {
-                            "name": "cita-node-address-0"
+                            "name": "secp156-address"
                         }
                     },
                     {
                         "name": "auth",
                         "configMap": {
-                            "name": "cita-node-auth-0"
+                            "name": "secp156-auth"
                         }
                     },
                     {
                         "name": "chain",
                         "configMap": {
-                            "name": "cita-node-chain-0"
+                            "name": "secp156-chain"
                         }
                     },
                     {
                         "name": "consensus",
                         "configMap": {
-                            "name": "cita-node-consensus-0"
+                            "name": "secp156-consensus"
                         }
                     },
                     {
                         "name": "executor",
                         "configMap": {
-                            "name": "cita-node-executor-0"
+                            "name": "secp156-executor"
                         }
                     },
                     {
                         "name": "jsonrpc",
                         "configMap": {
-                            "name": "cita-node-jsonrpc-0"
+                            "name": "secp156-jsonrpc"
                         }
                     },
                     {
                         "name": "network",
                         "configMap": {
-                            "name": "cita-node-network-0"
+                            "name": "secp156-network"
                         }
                     },
                     {
                         "name": "genesis",
                         "configMap": {
-                            "name": "cita-node-genesis-0"
+                            "name": "secp156-genesis"
                         }
                     },
                     {
                         "name": "privkey",
                         "secret": {
-                            "secretName": "cita-node-privkey"
+                            "secretName": "secp156-privkey"
                         }
                     },
                     {
