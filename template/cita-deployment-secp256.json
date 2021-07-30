@@ -175,55 +175,55 @@
                     {
                         "name": "address",
                         "configMap": {
-                            "name": "secp156-address"
+                            "name": "secp256-address"
                         }
                     },
                     {
                         "name": "auth",
                         "configMap": {
-                            "name": "secp156-auth"
+                            "name": "secp256-auth"
                         }
                     },
                     {
                         "name": "chain",
                         "configMap": {
-                            "name": "secp156-chain"
+                            "name": "secp256-chain"
                         }
                     },
                     {
                         "name": "consensus",
                         "configMap": {
-                            "name": "secp156-consensus"
+                            "name": "secp256-consensus"
                         }
                     },
                     {
                         "name": "executor",
                         "configMap": {
-                            "name": "secp156-executor"
+                            "name": "secp256-executor"
                         }
                     },
                     {
                         "name": "jsonrpc",
                         "configMap": {
-                            "name": "secp156-jsonrpc"
+                            "name": "secp256-jsonrpc"
                         }
                     },
                     {
                         "name": "network",
                         "configMap": {
-                            "name": "secp156-network"
+                            "name": "secp256-network"
                         }
                     },
                     {
                         "name": "genesis",
                         "configMap": {
-                            "name": "secp156-genesis"
+                            "name": "secp256-genesis"
                         }
                     },
                     {
                         "name": "privkey",
                         "secret": {
-                            "secretName": "secp156-privkey"
+                            "secretName": "secp256-privkey"
                         }
                     },
                     {

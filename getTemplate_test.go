@@ -4,8 +4,9 @@ import(
 	"testing"
 	corev1 "k8s.io/api/core/v1"
 	appsv1 "k8s.io/api/apps/v1"
-	"fmt"
+	//"fmt"
 )
+
 
 func TestGetTemplate(t *testing.T) {
 	file := "./template/cita-deployment-sm2.json"
@@ -40,12 +41,4 @@ func TestGetSVCTemplate(t *testing.T) {
 	//fmt.Println(svc)
 }
 
-func TestInit(t *testing.T) {
-	citaChain := &CitaChain{}
-	err := citaChain.Init()
-	if err != nil{
-		t.Fatal(err)
-	}
 
-	fmt.Println(citaChain)
-}
