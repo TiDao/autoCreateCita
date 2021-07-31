@@ -3,7 +3,10 @@ package main
 import(
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes"
+	"context"
 )
 
 //var deployment = &v1.Deployment{}
@@ -74,6 +77,33 @@ func (citaChain *CitaChain)CreateChain(request *RequestType) error{
 		}
 	}
 
+	return nil
+}
+
+
+func (citaChain *CitaChain) CreateDeployment(client *kubernetes.Clientset) error{
+	_,err := client.AppsV1().Deployment("cita").Create(context.TODO(),citaChain.Deployment,metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (citaChain *CitaChain) CreatePersistentVolumeClaim(client *kubernetes.Clientset) error{
+	_,err := client.CoreV1().PersistentVolumeClaim("cita").Create(context.TODO(),citaChain.PersistentVolumeClaim,metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (citaChain *CitaChain) CreateService(client *kubernetes.Clientset) error{
+	_,err := client.CoreV1().Service("cita").Create(context.TODO(),citaChain.Service,metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
