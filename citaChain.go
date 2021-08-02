@@ -8,6 +8,7 @@ import(
 	"k8s.io/client-go/kubernetes"
 	"context"
 	"log"
+	//"fmt"
 )
 
 //var deployment = &v1.Deployment{}
@@ -81,15 +82,15 @@ func (citaChain *CitaChain)InitChain(request *RequestType) error{
 
 func (citaChain *CitaChain) CreateChain(client *kubernetes.Clientset){
 	if err := citaChain.createPersistentVolumeClaims(client);err != nil{
-		log.Println(err)
+		log.Println(Err{Name:"CreateChain function error: ",Err:err})
 	}
 
 	if err := citaChain.createDeployments(client); err != nil{
-		log.Println(err)
+		log.Println(Err{Name:"CreateChain function error: ",Err:err})
 	}
 
 	if err := citaChain.createServices(client); err != nil{
-		log.Println(err)
+		log.Println(Err{Name:"CreateChain function error: ",Err:err})
 	}
 
 }
@@ -97,7 +98,7 @@ func (citaChain *CitaChain) CreateChain(client *kubernetes.Clientset){
 func (citaChain *CitaChain) createDeployments(client *kubernetes.Clientset) error{
 	_,err := client.AppsV1().Deployments("cita").Create(context.TODO(),&citaChain.Deployment,metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return Err{Name:"createDeployment function error: ",Err:err}
 	}
 
 	return nil
@@ -106,7 +107,7 @@ func (citaChain *CitaChain) createDeployments(client *kubernetes.Clientset) erro
 func (citaChain *CitaChain) createPersistentVolumeClaims(client *kubernetes.Clientset) error{
 	_,err := client.CoreV1().PersistentVolumeClaims("cita").Create(context.TODO(),&citaChain.PersistentVolumeClaim,metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return Err{Name:"creatPersistentVolumeClaims function error: ",Err: err}
 	}
 
 	return nil
@@ -114,10 +115,53 @@ func (citaChain *CitaChain) createPersistentVolumeClaims(client *kubernetes.Clie
 
 func (citaChain *CitaChain) createServices(client *kubernetes.Clientset) error{
 	_,err := client.CoreV1().Services("cita").Create(context.TODO(),&citaChain.Service,metav1.CreateOptions{})
+
+	//log.Println(service.Status.LoadBalancer.Ingress[0].IP)
 	if err != nil {
-		return err
+		return Err{Name:"createServices function error: ",Err: err}
 	}
 
 	return nil
 }
 
+func (citaChain *CitaChain) DeleteCitaChain(client *kubernetes.Clientset) {
+	if err := citaChain.deleteServices(client); err != nil{
+		log.Println(Err{Name: "DeleteCitaChiain error:",Err: err})
+	}
+
+	if err := citaChain.deleteDeployments(client);err != nil{
+		log.Println(Err{Name: "DeleteCitaChiain error:",Err: err})
+	}
+
+	if err := citaChain.deletePersistentVolumeClaims(client); err != nil{
+		log.Println(Err{Name: "DeleteCitaChiain error:",Err: err})
+	}
+}
+
+func (citaChain *CitaChain) deleteServices(client *kubernetes.Clientset) error{
+	err := client.CoreV1().Services("cita").Delete(context.TODO(),citaChain.Service.ObjectMeta.Name,metav1.DeleteOptions{})
+	if err != nil{
+		return Err{Name:"deleteServices function error: ",Err: err}
+	}
+
+	return nil
+}
+
+func (citaChain *CitaChain) deletePersistentVolumeClaims(client *kubernetes.Clientset) error {
+	err := client.CoreV1().PersistentVolumeClaims("cita").Delete(context.TODO(),citaChain.PersistentVolumeClaim.ObjectMeta.Name,metav1.DeleteOptions{})
+	if err != nil{
+		return Err{Name:"deletePersistentVolumeClaims function error: ",Err: err}
+	}
+
+	return nil
+}
+
+func (citaChain *CitaChain) deleteDeployments(client *kubernetes.Clientset) error{
+	err := client.AppsV1().Deployments("cita").Delete(context.TODO(),citaChain.Deployment.ObjectMeta.Name,metav1.DeleteOptions{})
+
+	if err != nil{
+		return Err{Name:"deleteDeployment function error: ",Err: err}
+	}
+
+	return nil
+}

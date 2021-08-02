@@ -37,7 +37,7 @@ var request = &RequestType{
 	ChainType: "secp256",
 }
 
-func main() {
+func InitClientset() *kubernetes.Clientset{
 	var kubeconfig *string
 	if home := homeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
@@ -49,17 +49,23 @@ func main() {
 
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
+
+	return clientset
+}
+
+func main() {
 
 	if err := citaChain.InitChain(request); err != nil{
 		log.Println(err)
 	}
 
-	citaChain.CreateChain(clientset)
+	//citaChain.CreateChain(clientset)
+	citaChain.DeleteCitaChain(clientset)
 }
