@@ -4,6 +4,8 @@ import(
 	"net/http"
 	"encoding/json"
 	"fmt"
+	"time"
+	"context"
 )
 
 
@@ -35,5 +37,14 @@ func CreateChain(w http.ResponseWriter,r *http.Request) {
 
 	clientset := InitClientset()
 	citaChain.CreateChain(clientset)
-	
+
+	time.Sleep(2 * time.Second)
+
+	service,err := citaChain.GetService(clientset)
+	if err != nil{
+		log.Println(err)
+		fmt.Sprintf(w,err.Error())
+	}
 }
+
+

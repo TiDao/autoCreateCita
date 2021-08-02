@@ -165,3 +165,11 @@ func (citaChain *CitaChain) deleteDeployments(client *kubernetes.Clientset) erro
 
 	return nil
 }
+
+func (citaChain *CitaChain) GetService(client *kubernetes.Clientset) (corev1.Service,error) {
+	service, err := clientset.CoreV1().Services("cita").Get(context.TODO(),citaChain.Service.ObjectMeta.Name,metav1.GetOption{})
+	if err != nil{
+		return nil,Err{name:"GetService function error: ",Err:err}
+	}
+	return service,nil
+}
