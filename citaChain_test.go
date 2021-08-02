@@ -24,7 +24,7 @@ func TestInit(t *testing.T) {
 	//fmt.Println(citaChain)
 }
 
-func TestCreateChain(t *testing.T) {
+func TestInitChain(t *testing.T) {
 	citaChain := &CitaChain{}
 	request := &RequestType {
 		ChainName: "test-chain-chainName",
@@ -33,7 +33,7 @@ func TestCreateChain(t *testing.T) {
 		ChainType: "secp256",
 	}
 
-	err := citaChain.CreateChain(request)
+	err := citaChain.InitChain(request)
 	if err != nil{
 		t.Error(err)
 	}

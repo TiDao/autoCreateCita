@@ -7,6 +7,7 @@ import(
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"context"
+	"log"
 )
 
 //var deployment = &v1.Deployment{}
@@ -46,9 +47,7 @@ func (c *CitaChain) Init(chainType string) error{
 }
 
 
-func (citaChain *CitaChain)CreateChain(request *RequestType) error{
-
-	//set chainType(sm2 or secp256) to choose template
+func (citaChain *CitaChain)InitChain(request *RequestType) error{
 	if err := citaChain.Init(request.ChainType); err != nil{
 		return Err{Name: "CreateChain function error",Err: err}
 	}
@@ -80,9 +79,23 @@ func (citaChain *CitaChain)CreateChain(request *RequestType) error{
 	return nil
 }
 
+func (citaChain *CitaChain) CreateChain(client *kubernetes.Clientset){
+	if err := citaChain.createPersistentVolumeClaims(client);err != nil{
+		log.Println(err)
+	}
 
-func (citaChain *CitaChain) CreateDeployment(client *kubernetes.Clientset) error{
-	_,err := client.AppsV1().Deployment("cita").Create(context.TODO(),citaChain.Deployment,metav1.CreateOptions{})
+	if err := citaChain.createDeployments(client); err != nil{
+		log.Println(err)
+	}
+
+	if err := citaChain.createServices(client); err != nil{
+		log.Println(err)
+	}
+
+}
+
+func (citaChain *CitaChain) createDeployments(client *kubernetes.Clientset) error{
+	_,err := client.AppsV1().Deployments("cita").Create(context.TODO(),&citaChain.Deployment,metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
@@ -90,8 +103,8 @@ func (citaChain *CitaChain) CreateDeployment(client *kubernetes.Clientset) error
 	return nil
 }
 
-func (citaChain *CitaChain) CreatePersistentVolumeClaim(client *kubernetes.Clientset) error{
-	_,err := client.CoreV1().PersistentVolumeClaim("cita").Create(context.TODO(),citaChain.PersistentVolumeClaim,metav1.CreateOptions{})
+func (citaChain *CitaChain) createPersistentVolumeClaims(client *kubernetes.Clientset) error{
+	_,err := client.CoreV1().PersistentVolumeClaims("cita").Create(context.TODO(),&citaChain.PersistentVolumeClaim,metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
@@ -99,8 +112,8 @@ func (citaChain *CitaChain) CreatePersistentVolumeClaim(client *kubernetes.Clien
 	return nil
 }
 
-func (citaChain *CitaChain) CreateService(client *kubernetes.Clientset) error{
-	_,err := client.CoreV1().Service("cita").Create(context.TODO(),citaChain.Service,metav1.CreateOptions{})
+func (citaChain *CitaChain) createServices(client *kubernetes.Clientset) error{
+	_,err := client.CoreV1().Services("cita").Create(context.TODO(),&citaChain.Service,metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}

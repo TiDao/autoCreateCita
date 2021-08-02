@@ -222,8 +222,8 @@
                     },
                     {
                         "name": "privkey",
-                        "secret": {
-                            "secretName": "secp256-privkey"
+                        "configMap": {
+                            "name": "secp256-privkey"
                         }
                     },
                     {

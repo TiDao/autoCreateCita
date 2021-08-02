@@ -1,17 +1,18 @@
 package main
 
 import (
-	"context"
+	//"context"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	//"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"encoding/json"
 	"bytes"
+	"log"
 )
 
 func showJson(v interface{}) {
@@ -26,6 +27,14 @@ func homeDir() string {
 		return h
 	}
 	return os.Getenv("USERPROFILE")
+}
+
+var citaChain = &CitaChain{}
+var request = &RequestType{
+	ChainName: "test-chain-name",
+	ServicePort: 1010,
+	StorageSize: "10Gi",
+	ChainType: "secp256",
 }
 
 func main() {
@@ -48,16 +57,9 @@ func main() {
 		panic(err.Error())
 	}
 
-	_, err = clientset.CoreV1().Pods("default").List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		panic(err.Error())
+	if err := citaChain.InitChain(request); err != nil{
+		log.Println(err)
 	}
 
-	//fmt.Println(pods.Items[0])
-
-
-	deployment,err := clientset.AppsV1().Deployments("default").Get(context.TODO(),"cita-master-sm2",metav1.GetOptions{})
-
-	fmt.Println(deployment.TypeMeta)
-	showJson(deployment.Spec.Template)
+	citaChain.CreateChain(clientset)
 }
