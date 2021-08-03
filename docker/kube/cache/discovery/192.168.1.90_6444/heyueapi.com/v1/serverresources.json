@@ -1,1 +1,0 @@
-{"kind":"APIResourceList","apiVersion":"v1","groupVersion":"heyueapi.com/v1","resources":[{"name":"websites","singularName":"website","namespaced":true,"kind":"Website","verbs":["delete","deletecollection","get","list","patch","create","update","watch"],"storageVersionHash":"6xHFtwV+aOo="}]}
