@@ -1,0 +1,22 @@
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolumeClaim",
+    "metadata": {
+        "name": "cita-pvc",
+		"namespace": "cita"
+    },
+    "spec": {
+        "resources": {
+            "requests": {
+				"storage": "10Gi"
+            },
+            "limits": {
+				"storage": "10Gi"
+            }
+        },
+        "accessModes": [
+            "ReadWriteMany"
+        ],
+        "storageClassName": "nfs"
+    }
+}

@@ -10,6 +10,7 @@ import (
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	//"k8s.io/client-go/rest"
 	"encoding/json"
 	"bytes"
 	"log"
@@ -23,7 +24,7 @@ func showJson(v interface{}) {
 	fmt.Printf("%v\n",out.String())
 }
 
-
+var templateDir = "./template"
 //var citaChain = &CitaChain{}
 //var request = &RequestType{
 //	ChainName: "test-chain-name",
@@ -34,8 +35,8 @@ func showJson(v interface{}) {
 
 func InitClientset() *kubernetes.Clientset{
 
-
-	config, err := clientcmd.BuildConfigFromFlags("", "/home/magatron/.kube/config")
+	//config,err := rest.InClusterConfig()
+	config, err := clientcmd.BuildConfigFromFlags("", "/home/heyue/kube/config")
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -52,7 +53,7 @@ func main() {
 
 	http.HandleFunc("/create",HttpCreateChain)
 	http.HandleFunc("/delete",HttpDeleteChain)
-	http.HandleFunc("/list",HttpListChain)
+	http.HandleFunc("/",HttpListChain)
 	err := http.ListenAndServe("0.0.0.0:10000",nil)
 	if err != nil{
 		log.Println(err)

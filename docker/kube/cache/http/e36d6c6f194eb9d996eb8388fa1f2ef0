@@ -1,0 +1,6 @@
+HTTP/2.0 200 OK
+Content-Length: 293
+Content-Type: application/json
+Date: Mon, 02 Aug 2021 05:23:02 GMT
+
+{"kind":"APIResourceList","apiVersion":"v1","groupVersion":"heyueapi.com/v1","resources":[{"name":"websites","singularName":"website","namespaced":true,"kind":"Website","verbs":["delete","deletecollection","get","list","patch","create","update","watch"],"storageVersionHash":"6xHFtwV+aOo="}]}

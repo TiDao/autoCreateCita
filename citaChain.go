@@ -21,12 +21,12 @@ type CitaChain struct{
 func (c *CitaChain) Init(chainType string) error{
 	deploymentFile := ""
 	if chainType == "secp256" {
-		deploymentFile = "./template/cita-deployment-secp256.json"
+		deploymentFile = templateDir + "/cita-deployment-secp256.json"
 	}else{
-		deploymentFile = "./template/cita-deployment-sm2.json"
+		deploymentFile = templateDir + "/cita-deployment-sm2.json"
 	}
-	PVCFile := "./template/cita-pvc.json"
-	SVCFile := "./template/svc.json"
+	PVCFile := templateDir + "/cita-pvc.json"
+	SVCFile := templateDir + "/svc.json"
 
 	if err := getDeploymentTemplate(deploymentFile,&c.Deployment); err != nil{
 		return Err{Name: "init function error",Err: err}
@@ -183,6 +183,9 @@ func ListChain(client *kubernetes.Clientset) ([]string,error) {
 
 	var services []string
 	for _,service := range serviceList.Items{
+		if service.ObjectMeta.Name == "auto-create-cita-service" {
+			continue
+		}
 		serviceURL := service.ObjectMeta.Name + " " + service.Status.LoadBalancer.Ingress[0].IP + ":"+strconv.Itoa(int(service.Spec.Ports[0].Port))
 		services = append(services,serviceURL)
 	}
