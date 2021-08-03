@@ -2,10 +2,10 @@ package main
 
 import (
 	//"context"
-	"flag"
+	//"flag"
 	"fmt"
-	"os"
-	"path/filepath"
+	//"os"
+	//"path/filepath"
 	//"k8s.io/apimachinery/pkg/api/errors"
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -23,12 +23,6 @@ func showJson(v interface{}) {
 	fmt.Printf("%v\n",out.String())
 }
 
-func homeDir() string {
-	if h := os.Getenv("HOME"); h != "" {
-		return h
-	}
-	return os.Getenv("USERPROFILE")
-}
 
 //var citaChain = &CitaChain{}
 //var request = &RequestType{
@@ -39,12 +33,9 @@ func homeDir() string {
 //}
 
 func InitClientset() *kubernetes.Clientset{
-	home := homeDir()
-	kubeconfig := flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 
-	flag.Parse()
 
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", "/home/magatron/.kube/config")
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -61,7 +52,7 @@ func main() {
 
 	http.HandleFunc("/create",HttpCreateChain)
 	http.HandleFunc("/delete",HttpDeleteChain)
-	http.HandleFunc("/list",httpListChain)
+	http.HandleFunc("/list",HttpListChain)
 	err := http.ListenAndServe("0.0.0.0:10000",nil)
 	if err != nil{
 		log.Println(err)

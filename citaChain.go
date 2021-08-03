@@ -7,8 +7,7 @@ import(
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"context"
-	//"log"
-	//"fmt"
+	"strconv"
 )
 
 //var deployment = &v1.Deployment{}
@@ -176,4 +175,21 @@ func (citaChain *CitaChain) GetService(client *kubernetes.Clientset) (*corev1.Se
 	return service,nil
 }
 
-func   
+func ListChain(client *kubernetes.Clientset) ([]string,error) {
+	serviceList,err := client.CoreV1().Services("cita").List(context.TODO(),metav1.ListOptions{})
+	if err != nil {
+		return nil,Err{Name:"ListChain function error: ",Err: err}
+	}
+
+	var services []string
+	for _,service := range serviceList.Items{
+		serviceURL := service.ObjectMeta.Name + " " + service.Status.LoadBalancer.Ingress[0].IP + ":"+strconv.Itoa(int(service.Spec.Ports[0].Port))
+		services = append(services,serviceURL)
+	}
+
+	if len(services) > 0 {
+		return services,nil
+	}else{
+		return nil,Err{Name:"there no chain"}
+	}
+}

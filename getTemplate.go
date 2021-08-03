@@ -17,7 +17,7 @@ type Err struct{
 }
 
 func (e Err) Error() string{
-	return fmt.Sprintf("%s:\n%v",e.Name,e.Err)
+	return fmt.Sprintf("%s: %v",e.Name,e.Err)
 }
 
 func getDeploymentTemplate(file string,v *appsv1.Deployment) error {

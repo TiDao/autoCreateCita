@@ -24,6 +24,11 @@ type ResponseType struct{
 
 
 func HttpCreateChain(w http.ResponseWriter,r *http.Request) {
+	defer func(){
+		if r := recover(); r!=nil{
+			log.Println("recover...",r)
+		}
+	}()
 
 	request := &RequestType{}
 	citaChain := &CitaChain{}
@@ -35,24 +40,40 @@ func HttpCreateChain(w http.ResponseWriter,r *http.Request) {
 		fmt.Fprintf(w,err.Error())
 	}
 
-	fmt.Println(request)
 	if err := citaChain.InitChain(request);err != nil{
 		fmt.Fprintf(w,err.Error())
 	}
 
 	clientset := InitClientset()
 	log.Printf("start init k8s client\n")
+
+	//check chainName has same one in the cluster
+	chains,_:= ListChain(clientset)
+	if len(chains) > 0{
+		for _,chain := range chains{
+			if chain == request.ChainName{
+				fmt.Fprintf(w,"the chainName %s had same one in the cluster\n",chain)
+				log.Printf("%s has be used in cluster\n",chain)
+				panic(err)
+			}
+		}
+	}
+
+
 	if err := citaChain.CreateChain(clientset);err != nil{
-		log.Fatal(err)
+		log.Println(err)
 	}else{
 		log.Printf("start create %s chain\n",request.ChainName)
 	}
 
+	//wait the service get LoadBalancer IP
 	time.Sleep(2 * time.Second)
 
+
+	//get service LoadBalancer IP and return to user
 	service,err := citaChain.GetService(clientset)
 	if err != nil{
-		log.Fatal(err)
+		log.Println(err)
 		fmt.Fprintf(w,"get servcie error : %s\n",err.Error())
 	}else{
 		response.URL = service.Status.LoadBalancer.Ingress[0].IP+":"+strconv.Itoa(
@@ -64,6 +85,11 @@ func HttpCreateChain(w http.ResponseWriter,r *http.Request) {
 }
 
 func HttpDeleteChain(w  http.ResponseWriter,r *http.Request) {
+	defer func(){
+		if r := recover(); r!=nil{
+			log.Println("recover...",r)
+		}
+	}()
 	request := &RequestType{}
 	citaChain := &CitaChain{}
 	//response := &ResponseType{}
@@ -83,12 +109,23 @@ func HttpDeleteChain(w  http.ResponseWriter,r *http.Request) {
 	log.Println("init k8s clientset success")
 
 	if err := citaChain.DeleteChain(clientset);err != nil{
-		log.Fatal(err)
+		panic(err)
 	}else{
 		fmt.Fprintf(w,"delete chain %s success\n",request.ChainName)
 	}
 }
 
 func HttpListChain(w http.ResponseWriter,r *http.Request) {
-}
+	clientset := InitClientset()
+	log.Println("init k8s client success")
 
+	chains,err := ListChain(clientset)
+	if err != nil {
+		log.Println(err)
+		fmt.Fprintf(w,err.Error())
+	}else{
+		for _,chainName := range chains{
+			fmt.Fprintf(w,"chainName: %s\n",chainName)
+		}
+	}
+}
