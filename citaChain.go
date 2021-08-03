@@ -7,7 +7,7 @@ import(
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"context"
-	"log"
+	//"log"
 	//"fmt"
 )
 
@@ -80,19 +80,20 @@ func (citaChain *CitaChain)InitChain(request *RequestType) error{
 	return nil
 }
 
-func (citaChain *CitaChain) CreateChain(client *kubernetes.Clientset){
+func (citaChain *CitaChain) CreateChain(client *kubernetes.Clientset) error{
 	if err := citaChain.createPersistentVolumeClaims(client);err != nil{
-		log.Println(Err{Name:"CreateChain function error: ",Err:err})
+		return Err{Name:"CreateChain function error: ",Err:err}
 	}
 
 	if err := citaChain.createDeployments(client); err != nil{
-		log.Println(Err{Name:"CreateChain function error: ",Err:err})
+		return Err{Name:"CreateChain function error: ",Err:err}
 	}
 
 	if err := citaChain.createServices(client); err != nil{
-		log.Println(Err{Name:"CreateChain function error: ",Err:err})
+		return Err{Name:"CreateChain function error: ",Err:err}
 	}
 
+	return nil
 }
 
 func (citaChain *CitaChain) createDeployments(client *kubernetes.Clientset) error{
@@ -124,18 +125,19 @@ func (citaChain *CitaChain) createServices(client *kubernetes.Clientset) error{
 	return nil
 }
 
-func (citaChain *CitaChain) DeleteCitaChain(client *kubernetes.Clientset) {
+func (citaChain *CitaChain) DeleteChain(client *kubernetes.Clientset) error {
 	if err := citaChain.deleteServices(client); err != nil{
-		log.Println(Err{Name: "DeleteCitaChiain error:",Err: err})
+		return Err{Name: "DeleteCitaChiain error:",Err: err}
 	}
 
 	if err := citaChain.deleteDeployments(client);err != nil{
-		log.Println(Err{Name: "DeleteCitaChiain error:",Err: err})
+		return Err{Name: "DeleteCitaChiain error:",Err: err}
 	}
 
 	if err := citaChain.deletePersistentVolumeClaims(client); err != nil{
-		log.Println(Err{Name: "DeleteCitaChiain error:",Err: err})
+		return Err{Name: "DeleteCitaChiain error:",Err: err}
 	}
+	return nil
 }
 
 func (citaChain *CitaChain) deleteServices(client *kubernetes.Clientset) error{
@@ -166,10 +168,12 @@ func (citaChain *CitaChain) deleteDeployments(client *kubernetes.Clientset) erro
 	return nil
 }
 
-func (citaChain *CitaChain) GetService(client *kubernetes.Clientset) (corev1.Service,error) {
-	service, err := clientset.CoreV1().Services("cita").Get(context.TODO(),citaChain.Service.ObjectMeta.Name,metav1.GetOption{})
+func (citaChain *CitaChain) GetService(client *kubernetes.Clientset) (*corev1.Service,error) {
+	service, err := client.CoreV1().Services("cita").Get(context.TODO(),citaChain.Service.ObjectMeta.Name,metav1.GetOptions{})
 	if err != nil{
-		return nil,Err{name:"GetService function error: ",Err:err}
+		return nil,Err{Name:"GetService function error: ",Err:err}
 	}
 	return service,nil
 }
+
+func   

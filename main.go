@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"log"
+	"net/http"
 )
 
 func showJson(v interface{}) {
@@ -29,21 +30,17 @@ func homeDir() string {
 	return os.Getenv("USERPROFILE")
 }
 
-var citaChain = &CitaChain{}
-var request = &RequestType{
-	ChainName: "test-chain-name",
-	ServicePort: 1010,
-	StorageSize: "10Gi",
-	ChainType: "secp256",
-}
+//var citaChain = &CitaChain{}
+//var request = &RequestType{
+//	ChainName: "test-chain-name",
+//	ServicePort: 1010,
+//	StorageSize: "10Gi",
+//	ChainType: "secp256",
+//}
 
 func InitClientset() *kubernetes.Clientset{
-	var kubeconfig *string
-	if home := homeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path the kubeconfig file")
-	}
+	home := homeDir()
+	kubeconfig := flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 
 	flag.Parse()
 
@@ -62,10 +59,11 @@ func InitClientset() *kubernetes.Clientset{
 
 func main() {
 
-	if err := citaChain.InitChain(request); err != nil{
+	http.HandleFunc("/create",HttpCreateChain)
+	http.HandleFunc("/delete",HttpDeleteChain)
+	http.HandleFunc("/list",httpListChain)
+	err := http.ListenAndServe("0.0.0.0:10000",nil)
+	if err != nil{
 		log.Println(err)
 	}
-
-	//citaChain.CreateChain(clientset)
-	citaChain.DeleteCitaChain(clientset)
 }
